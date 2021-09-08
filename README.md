@@ -3,7 +3,7 @@ Docker environment for scipy development
 
 ## Motivation
 
-Installing dependencies is a pain, and sometimes you don't want (or can't) install a bunch of packages on your machine. With this Dockerfile you will have an already configured Ubuntu container for scipy development. No need to install anything except Docker.
+Installing dependencies is a pain, and sometimes you don't want (or can't) install a bunch of packages on your machine. With this Dockerfile you will have an Ubuntu container already configured for scipy development. No need to install anything except Docker.
 
 ## Usage
 
