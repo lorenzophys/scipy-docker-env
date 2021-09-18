@@ -36,7 +36,7 @@ Passing `HOST_USER`, `HOST_UID`, `HOST_GID` to `--build-arg` makes sure that the
 Now you can run the container:
 
 ```bash
-$ docker run -it -v "$(pwd)":"$(pwd)" --name scipy-env scipy-dev /bin/bash
+$ docker run -it -v "$(pwd)":"/home/$USER/scipy" --name scipy-env scipy-dev /bin/bash
 ```
 
 This will mount the scipy directory into the container recreating the directory structure you have on your host machine.
