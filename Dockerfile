@@ -12,7 +12,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     git \
     python3 \
-    python3-pip
+    python3-pip \
+    sudo
 
 # BLAS and LAPACK, libatlas and the compilers
 RUN apt-get update && apt-get install -y \
@@ -40,7 +41,7 @@ RUN pip3 install \
     sphinx-panels
 
 # This will create a user inside the container that matches your user on host
-RUN groupadd -g ${HOST_GID} ${HOST_USER} \
+RUN groupadd -g $HOST_GID $HOST_USER \
     && useradd \
     --create-home \
     --shell /bin/bash \
@@ -49,9 +50,15 @@ RUN groupadd -g ${HOST_GID} ${HOST_USER} \
     --home-dir /home/$HOST_USER \
     $HOST_USER
 
-# Adjust the permissions
-RUN chown ${HOST_USER}:${HOST_USER} /home/${HOST_USER}
+# Sudo privileges without password
+RUN usermod -aG sudo $HOST_USER \
+    && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-WORKDIR $SCIPY_DIR
+# Adjust the permissions
+RUN chown $HOST_USER:$HOST_USER /home/$HOST_USER
+
+WORKDIR /home/$HOST_USER/scipy
+
+ENV DEBIAN_FRONTEND=dialog
 
 USER $HOST_USER

@@ -39,7 +39,7 @@ Now you can run the container:
 $ docker run -it -v "$(pwd)":"/home/$USER/scipy" --name scipy-env scipy-dev /bin/bash
 ```
 
-This will mount the scipy directory into the container recreating the directory structure you have on your host machine.
+This will mount the scipy directory into the container in the `/home/$USER/scipy` directory.
 
 ## Scipy development
 
@@ -52,7 +52,7 @@ $ python3 setup.py build_ext --inplace
 install it:
 
 ```bash
-$ pip3 install -e .
+$ sudo pip3 install -e .
 ```
 
 and to make sure this went well, open the python interpreter and verify the scipy version:
@@ -81,7 +81,3 @@ If your global credentials are different from the ones you want to use for scipy
 $ git config user.user <your user>
 $ git config user.email <your email>
 ```
-
-
-
-
