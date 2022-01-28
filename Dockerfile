@@ -1,22 +1,16 @@
 FROM ubuntu:20.04
 
-# Read the variables passed through --build-arg
-ARG SCIPY_DIR
-ARG HOST_USER
-ARG HOST_UID
-ARG HOST_GID
-
-ENV DEBIAN_FRONTEND=noninteractive
-
 # Install git and Python
-RUN apt-get update && apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
     git \
     python3 \
     python3-pip \
     sudo
 
 # BLAS and LAPACK, libatlas and the compilers
-RUN apt-get update && apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \
     gfortran \
     libatlas-base-dev \
@@ -39,26 +33,3 @@ RUN pip3 install \
     pythran \
     sphinx \
     sphinx-panels
-
-# This will create a user inside the container that matches your user on host
-RUN groupadd -g $HOST_GID $HOST_USER \
-    && useradd \
-    --create-home \
-    --shell /bin/bash \
-    --uid $HOST_UID \
-    --gid $HOST_GID \
-    --home-dir /home/$HOST_USER \
-    $HOST_USER
-
-# Sudo privileges without password
-RUN usermod -aG sudo $HOST_USER \
-    && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-# Adjust the permissions
-RUN chown $HOST_USER:$HOST_USER /home/$HOST_USER
-
-WORKDIR /home/$HOST_USER/scipy
-
-ENV DEBIAN_FRONTEND=dialog
-
-USER $HOST_USER

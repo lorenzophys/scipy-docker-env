@@ -1,0 +1,15 @@
+---
+version: "3"
+services:
+  scipy:
+    build: "."
+    image: "scipy-docker-env:scipy"
+    working_dir: ${PWD}/..
+    network_mode: "host"
+    volumes:
+      - "${PWD}/..:/${PWD}/.."
+      - "./entrypoint.sh:/entrypoint.sh"
+    env_file:
+      - ".env"
+    entrypoint: "/entrypoint.sh"
+

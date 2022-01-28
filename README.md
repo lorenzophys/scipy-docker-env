@@ -3,7 +3,7 @@ Docker environment for scipy development
 
 ## Motivation
 
-Installing dependencies is a pain, and sometimes you don't want (or can't) install a bunch of packages on your machine. With this Dockerfile you will have an Ubuntu container already configured for scipy development. No need to install anything except Docker.
+Installing dependencies is a pain, and sometimes you don't want (or can't) install a bunch of packages on your machine. With this Dockerfile you will have an Ubuntu container already configured for scipy development. No need to install anything except Docker and docker-compose.
 
 ## Usage
 
@@ -12,34 +12,32 @@ Clone scipy:
 ```bash
 $ git clone --recurse-submodules git@github.com:<your-username>/scipy.git
 ```
-Copy the Dockerfile in the scipy root:
+Copy the repo in the scipy root (or create a soft link):
 
 ```bash
-$ cp Dockerfile path/to/scipy
+$ cp scipy-docker-env path/to/scipy
 ```
 
-and build the image:
+generate the env file with your user info:
 
 ```bash
-$ cd path/to/scipy
-$ docker build \
-    -t scipy-dev \
-    --build-arg SCIPY_DIR="$(pwd)" \
-    --build-arg HOST_USER=$USER \
-    --build-arg HOST_UID=$(id -u) \
-    --build-arg HOST_GID=$(id -g) \
-    --no-cache . 
+$ cd path/to/scipy/scipy-docker-env
+$ echo -e "HOST_USERNAME=$USER\nHOST_UID=$(id -u)\nHOST_GID=$(id -g)" > .env
 ```
 
-Passing `HOST_USER`, `HOST_UID`, `HOST_GID` to `--build-arg` makes sure that the user inside the container matches yours on the host. This way the files created from inside the container will belong to you and not to `root`.
+Passing `HOST_USERNAME`, `HOST_UID`, `HOST_GID` makes sure that the user inside the container matches yours on the host. This way the files created from inside the container will belong to you and not to `root`.
 
-Now you can run the container:
+Now you can spin up the container:
 
 ```bash
-$ docker run -it -v "$(pwd)":"/home/$USER/scipy" --name scipy-env scipy-dev /bin/bash
+$ docker-compose up -d
 ```
 
-This will mount the scipy directory into the container in the `/home/$USER/scipy` directory.
+This container will run in the background, waiting to be used:
+
+```bash
+$ docker exec -it -u $USER <container_name> bash
+```
 
 ## Scipy development
 
@@ -49,18 +47,18 @@ Once inside the container build scipy:
 $ python3 setup.py build_ext --inplace
 ```
 
-install it:
+Install it:
 
 ```bash
 $ sudo pip3 install -e .
 ```
 
-and to make sure this went well, open the python interpreter and verify the scipy version:
+To make sure this went well, open the Python interpreter and verify the scipy version:
 
 ```python
 >>> import scipy
 >>> print(scipy.__version__)
-1.8.0.dev0+1523.7e30968
+1.9.0.dev0+1339.6606c2e
 ```
 
 Run the tests to make sure everything works properly:
