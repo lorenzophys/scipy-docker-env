@@ -12,4 +12,3 @@ services:
     env_file:
       - ".env"
     entrypoint: "/entrypoint.sh"
-
